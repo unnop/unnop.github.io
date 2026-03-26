@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World!</title>
+    <style>
+      body {
+        padding: 25px;
+        font-family: sans-serif;
+      }
+      .title {
+        color: #5C6AC4;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Hello World!</h1>
+    <p id="currentTime"></p>
+
+    <script>
+      function showTime() {
+        document.getElementById('currentTime').innerHTML = new Date().toUTCString();
+      }
+
+      showTime();
+
+      setInterval(function () {
+        showTime();
+      }, 1000);
+    </script>
+  </body>
+</html>
