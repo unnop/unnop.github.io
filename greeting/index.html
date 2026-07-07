@@ -18,7 +18,7 @@
             
             if (!accessToken) {
                 sessionStorage.clear();
-                window.location.href = '../';
+                window.location.replace('../');
                 return;
             }
 
@@ -37,11 +37,11 @@
                 if (currentTime >= payload.exp) {
                     sessionStorage.clear();
                     alert('❌ เซสชันของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
-                    window.location.href = '../';
+                    window.location.replace('../');
                 }
             } catch (e) {
                 sessionStorage.clear();
-                window.location.href = '../';
+                window.location.replace('../');
             }
         }
 
@@ -53,8 +53,7 @@
         <h1>ยินดีต้อนรับสู่แดชบอร์ดภายในครับ 🚀</h1>
         <hr>
         <p>สวัสดีครับคุณ: <strong><span id="display-username"></span></strong></p>
-        <p>ยินดีด้วย! คุณสามารถเข้าถึงข้อมูลใน Subfolder <code>/greeting/</code> ได้แล้ว เนื่องจากระบบตรวจพบ Token ของ Keycloak (Active Directory) เรียบร้อย</p>
-        
+        <p>ยินดีด้วย! คุณสามารถเข้าถึงข้อมูลใน Subfolder <code>/greeting/</code> ได้แล้ว</p>
         <br>
         <button class="btn-logout" onclick="handleLogout()">ออกจากระบบ (Logout)</button>
     </div>
@@ -67,9 +66,8 @@
 
         function handleLogout() {
             sessionStorage.clear();
-            window.location.href = '../';
+            window.location.replace('../');
         }
     </script>
-
 </body>
 </html>
