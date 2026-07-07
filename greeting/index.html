@@ -13,11 +13,9 @@
 <body>
 
     <script>
-        // ฟังก์ชันสำหรับแกะ JWT Token มาเช็กเวลาหมดอายุ (exp) ยิงเทียบกับเวลาเครื่องคอมพิวเตอร์
         function checkTokenAndRedirect() {
             const accessToken = sessionStorage.getItem('access_token');
             
-            // 1. เช็กว่ามี Token ไหม
             if (!accessToken) {
                 sessionStorage.clear();
                 window.location.href = '../';
@@ -25,7 +23,6 @@
             }
 
             try {
-                // แกะ Base64 โครงสร้างส่วน Payload ของ JWT
                 const base64Url = accessToken.split('.')[1];
                 const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
                 const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -33,28 +30,22 @@
                 }).join(''));
 
                 const payload = JSON.parse(jsonPayload);
-                const currentTime = Math.floor(Date.now() / 1000); // เวลาปัจจุบันของเครื่องคอม (วินาที)
+                const currentTime = Math.floor(Date.now() / 1000);
 
-                // 🔍 [เปิดดูเพื่อ Debug]: อยากรู้ว่าเหลืออีกกี่วินาทีหมดอายุ ให้กด F12 ดูที่แท็บ Console ได้ครับ
                 console.log("Token จะหมดอายุในอีก:", (payload.exp - currentTime) + " วินาที");
 
-                // 2. เช็กว่า Token หมดอายุหรือยัง
                 if (currentTime >= payload.exp) {
                     sessionStorage.clear();
                     alert('❌ เซสชันของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
-                    window.location.href = '../'; // ดีดกลับไปล็อกอินใหม่ที่หน้าแรก
+                    window.location.href = '../';
                 }
             } catch (e) {
-                // ถ้าเกิด Error ใดๆ ในการแกะ Token ให้เหมาว่าไม่ปลอดภัยแล้วเตะออกทันที
                 sessionStorage.clear();
                 window.location.href = '../';
             }
         }
 
-        // สั่งให้ระบบทำงาน "ทันที" ที่โหลดหน้าเว็บครั้งแรก
         checkTokenAndRedirect();
-
-        // ตั้งเวลาให้ฟังก์ชันทำงานซ้ำอัตโนมัติ "ทุกๆ 5 วินาที" (เปิดจอค้างไว้ก็เด้งหลุดได้)
         setInterval(checkTokenAndRedirect, 5000);
     </script>
 
@@ -69,7 +60,6 @@
     </div>
 
     <script>
-        // แสดงชื่อผู้ใช้ที่ดึงมาจาก Session
         const username = sessionStorage.getItem('username');
         if (username) {
             document.getElementById('display-username').innerText = username;
