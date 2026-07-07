@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greeting - หน้าภายในระบบ</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f7f6; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; }
+        .btn-logout { background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <script>
+        // 1. ดักจับความปลอดภัยที่หน้าบ้าน (Client-side protection)
+        // ดึง Token ที่หน้าแรกเก็บไว้มาเช็กดู
+        const accessToken = sessionStorage.getItem('access_token');
+        const username = sessionStorage.getItem('username');
+
+        if (!accessToken) {
+            // ถ้าไม่มี Token แปลว่าแอบพิมพ์ URL เข้ามาตรงๆ หรือยังไม่ได้ล็อกอิน
+            alert('❌ กรุณาเข้าสู่ระบบก่อนเข้าใช้งานหน้านี้');
+            window.location.href = '../'; // ดีดกลับไปที่หน้าแรก (Root folder) เพื่อไปเข้า Keycloak
+        }
+    </script>
+
+    <div class="card">
+        <h1>ยินดีต้อนรับสู่แดชบอร์ดภายในครับ 🚀</h1>
+        <hr>
+        <p>สวัสดีครับคุณ: <strong><span id="display-username"></span></strong></p>
+        <p>ยินดีด้วย! คุณสามารถเข้าถึงข้อมูลใน Subfolder <code>/greeting/</code> ได้แล้ว เนื่องจากระบบตรวจพบ Token ของ Keycloak (Active Directory) เรียบร้อย</p>
+        
+        <br>
+        <button class="btn-logout" onclick="handleLogout()">ออกจากระบบ (Logout)</button>
+    </div>
+
+    <script>
+        // 3. แสดงชื่อผู้ใช้ที่ดึงมาจาก Session
+        if (username) {
+            document.getElementById('display-username').innerText = username;
+        }
+
+        function handleLogout() {
+            // ล้างข้อมูลใน sessionStorage ของเครื่องทิ้งให้หมด
+            sessionStorage.clear();
+            // ดีดกลับไปหน้าแรกเพื่อทำการ Logout ออกจากเซิร์ฟเวอร์ Keycloak อย่างสมบูรณ์
+            window.location.href = '../';
+        }
+    </script>
+
+</body>
+</html>
