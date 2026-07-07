@@ -23,31 +23,27 @@
     </div>
 
     <script>
-        // 2. ตั้งค่าการเชื่อมต่อไปยัง Keycloak เซิร์ฟเวอร์ของคุณ
         const keycloak = new Keycloak({
             url: 'https://iam.kingpower.com', 
             realm: 'f1-bof',                
             clientId: 'github-auth'          
         });
 
-        // 3. สั่งให้ Keycloak เริ่มทำงานตอนโหลดหน้าเว็บ
+        const targetRedirectUri = window.location.origin + window.location.pathname + 'greeting/';
+
         keycloak.init({ 
             onLoad: 'login-required', 
-            checkLoginIframe: false   
+            checkLoginIframe: false,
+            redirectUri: targetRedirectUri
         }).then(function(authenticated) {
             if (authenticated) {
-                // [แก้ไขจุดที่พัง]: ปิดปีกกาของ if (authenticated) ให้ครบถ้วนก่อนส่งหน้าไป greeting/
                 sessionStorage.setItem('access_token', keycloak.token);
                 sessionStorage.setItem('username', keycloak.tokenParsed.preferred_username);
-
-                // สั่ง Redirect ไปยัง sub folder
-                window.location.href = 'greeting/';
             } else {
-                // กรณีหลุดสิทธิ์ (เผื่อไว้)
                 document.getElementById('loading').innerText = 'ไม่ได้รับอนุญาตให้เข้าใช้งาน';
             }
         }).catch(function(error) {
-            console.error('Keycloak Init Error:', error); // พิมพ์ Error ลง Console เผื่อใช้ไล่เช็ก
+            console.error('Keycloak Init Error:', error);
             document.getElementById('loading').innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบยืนยันตัวตน';
         });
     </script>
