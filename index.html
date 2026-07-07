@@ -28,9 +28,9 @@
     <script>
         // 2. ตั้งค่าการเชื่อมต่อไปยัง Keycloak เซิร์ฟเวอร์ของคุณ
         const keycloak = new Keycloak({
-            url: 'https://keycloak.yourcompany.com', // URL ของ Keycloak Server
-            realm: 'your-realm-name',                // ชื่อ Realm
-            clientId: 'github-pages-client'          // ชื่อ Client ID ที่สร้างไว้ใน Keycloak
+            url: 'https://dev-iam.apps.kpc-dev.com', // URL ของ Keycloak Server
+            realm: 'f1-bof-dev-ad',                // ชื่อ Realm
+            clientId: 'github-auth'          // ชื่อ Client ID ที่สร้างไว้ใน Keycloak
         });
 
         // 3. สั่งให้ Keycloak เริ่มทำงานตอนโหลดหน้าเว็บ
