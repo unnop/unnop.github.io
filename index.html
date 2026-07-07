@@ -7,20 +7,7 @@
     <script src="https://iam.kingpower.com/js/keycloak.js"></script>
 </head>
 <body>
-
     <div id="loading">กำลังตรวจสอบสิทธิ์...</div>
-
-    <div id="content" style="display: none;">
-        <h1>ยินดีต้อนรับเข้าสู่ระบบ (GitHub Pages)</h1>
-        <p>สวัสดีคุณ: <strong id="username"></strong></p>
-        <p>อีเมล: <span id="email"></span></p>
-        
-        <button onclick="keycloak.logout()">ออกจากระบบ (Logout)</button>
-        
-        <hr>
-        <h3>Token สำหรับเอาไปยิงหา API หลังบ้าน:</h3>
-        <textarea id="token" rows="10" cols="80" readonly></textarea>
-    </div>
 
     <script>
         const keycloak = new Keycloak({
@@ -29,22 +16,21 @@
             clientId: 'github-auth'          
         });
 
-        const targetRedirectUri = window.location.origin + window.location.pathname + 'greeting/';
-
         keycloak.init({ 
             onLoad: 'login-required', 
             checkLoginIframe: false,
-            redirectUri: targetRedirectUri
+            redirectUri: 'https://unnop.github.io/'
         }).then(function(authenticated) {
             if (authenticated) {
                 sessionStorage.setItem('access_token', keycloak.token);
                 sessionStorage.setItem('username', keycloak.tokenParsed.preferred_username);
+                window.location.href = 'greeting/';
             } else {
                 document.getElementById('loading').innerText = 'ไม่ได้รับอนุญาตให้เข้าใช้งาน';
             }
         }).catch(function(error) {
             console.error('Keycloak Init Error:', error);
-            document.getElementById('loading').innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบยืนยันตัวตน';
+            document.getElementById('loading').innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
         });
     </script>
 </body>
