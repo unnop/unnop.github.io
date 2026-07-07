@@ -39,17 +39,14 @@
             checkLoginIframe: false   // ปิดใช้งาน iframe check เพื่อลดปัญหากับบล็อกเกอร์บางตัว
         }).then(function(authenticated) {
             if (authenticated) {
-                // ถ้าล็อกอินสำเร็จแล้ว ให้ซ่อนหน้า Loading แล้วโชว์เนื้อหาเว็บ
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('content').style.display = 'block';
+        // 1. เก็บ Token เอาไว้ใน sessionStorage หรือ localStorage 
+        // เพื่อให้เว็บใน sub folder สามารถดึงไปใช้งานหรือส่งหา API ต่อได้
+        sessionStorage.setItem('access_token', keycloak.token);
+        sessionStorage.setItem('username', keycloak.tokenParsed.preferred_username);
 
-                // ดึงข้อมูลผู้ใช้ (ที่ดึงมาจาก Active Directory อีกที) มาแสดงบนหน้าเว็บ
-                document.getElementById('username').innerText = keycloak.tokenParsed.preferred_username || 'User';
-                document.getElementById('email').innerText = keycloak.tokenParsed.email || 'No Email';
-                
-                // โชว์ Access Token (JWT) เผื่อคุณจะเอาไปใช้ยิง API หลังบ้านต่อ
-                document.getElementById('token').value = keycloak.token;
-            }
+        // 2. สั่ง Redirect ไปยัง sub folder ที่คุณต้องการ
+        // ตัวอย่าง: ถ้าต้องการไปที่ https://sawi-kpc.github.io/gdb-ppp/dashboard/
+        window.location.href = './greeting/';
         }).catch(function() {
             document.getElementById('loading').innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับระบบยืนยันตัวตน';
         });
