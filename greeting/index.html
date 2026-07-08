@@ -38,6 +38,8 @@
   </style>
   <!-- Keycloak JS Adapter -->
   <script src="https://iam.kingpower.com/js/keycloak.js"></script>
+  <!-- Shared Keycloak Configuration -->
+  <script src="/keycloak-config.js"></script>
 </head>
 <body>
 
@@ -47,11 +49,7 @@
   </div>
 
   <script>
-    const keycloak = new Keycloak({
-            url: 'https://iam.kingpower.com', 
-            realm: 'f1-bof',                
-            clientId: 'github-auth'          
-        });
+    const keycloak = new Keycloak(keycloakConfig);
 
     keycloak.init({ onLoad: 'login-required' }).then(authenticated => {
       if (authenticated) {
@@ -70,8 +68,15 @@
         window.location.href = '../index.html';
       }
     }).catch(err => {
-      console.error("Authentication failed", err);
-      window.location.href = '../index.html';
+      console.error("Authentication error on greeting page", err);
+      document.getElementById('greetingMessage').textContent = 'Authentication Error';
+      const logoutBtn = document.getElementById('logoutBtn');
+      logoutBtn.textContent = 'Back to Login';
+      logoutBtn.style.display = 'inline-block';
+      logoutBtn.onclick = null; // Remove previous event listener
+      logoutBtn.addEventListener('click', function() {
+          window.location.href = window.location.origin + '/index.html';
+      });
     });
   </script>
 

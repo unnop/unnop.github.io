@@ -40,6 +40,8 @@
   </style>
   <!-- Keycloak JS Adapter -->
   <script src="https://iam.kingpower.com/js/keycloak.js"></script>
+  <!-- Shared Keycloak Configuration -->
+  <script src="/keycloak-config.js"></script>
 </head>
 <body>
 
@@ -47,14 +49,11 @@
     <h2>Welcome</h2>
     <p>Please sign in to continue</p>
     <button id="loginBtn">Login with Keycloak</button>
+    <p id="error-message" style="color: #dc2626; margin-top: 1rem; display: none;"></p>
   </div>
 
   <script>
-    const keycloak = new Keycloak({
-            url: 'https://iam.kingpower.com', 
-            realm: 'f1-bof',                
-            clientId: 'github-auth'          
-        });
+    const keycloak = new Keycloak(keycloakConfig);
 
     keycloak.init({ onLoad: 'check-sso' }).then(authenticated => {
       if (authenticated) {
@@ -68,6 +67,13 @@
       }
     }).catch(err => {
       console.error("Failed to initialize Keycloak", err);
+      const loginBtn = document.getElementById('loginBtn');
+      const errorMessage = document.getElementById('error-message');
+      loginBtn.disabled = true;
+      loginBtn.style.backgroundColor = '#9ca3af'; // Gray out the button
+      loginBtn.style.cursor = 'not-allowed';
+      errorMessage.textContent = 'Authentication service is currently unavailable. Please try again later.';
+      errorMessage.style.display = 'block';
     });
   </script>
 
