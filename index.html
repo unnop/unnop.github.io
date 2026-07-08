@@ -20,14 +20,17 @@
         
         if (urlParams.get('action') === 'logout') {
             keycloak.init({ checkLoginIframe: false }).then(function() {
-                sessionStorage.clear();
+                localStorage.clear();
                 keycloak.logout();
             });
         } else {
             keycloak.onAuthSuccess = function() {
-                sessionStorage.setItem('access_token', keycloak.token);
-                sessionStorage.setItem('username', keycloak.tokenParsed.preferred_username);
-                window.location.href = 'greeting/';
+                // 💡 เปลี่ยนมาใช้ localStorage เพื่อให้ส่งข้ามโฟลเดอร์ได้ชัวร์กว่า
+                localStorage.setItem('access_token', keycloak.token);
+                localStorage.setItem('username', keycloak.tokenParsed.preferred_username);
+                
+                // ใช้ replace เพื่อไม่ให้ประวัติหน้าแรกค้างในปุ่ม Back บล็อกการลูป
+                window.location.replace('greeting/');
             };
 
             keycloak.init({ 
