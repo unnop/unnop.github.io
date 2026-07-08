@@ -1,79 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Greeting</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-      background-color: #f3f4f6;
-    }
-    .greeting-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      min-width: 280px;
-    }
-    button {
-      margin-top: 1.5rem;
-      padding: 0.5rem 1.5rem;
-      background-color: #dc2626;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    button:hover {
-      background-color: #b91c1c;
-    }
-  </style>
-  <!-- Keycloak JS Adapter -->
-  <script src="https://cdn.jsdelivr.net/npm/keycloak-js@22.0.5/dist/keycloak.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greeting</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f4f6;
+        }
+
+        .greeting-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            min-width: 280px;
+        }
+
+        button {
+            margin-top: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #b91c1c;
+        }
+    </style>
+    <!-- Keycloak JS Adapter -->
+    <script src="https://cdn.jsdelivr.net/npm/keycloak-js@22.0.5/dist/keycloak.min.js"></script>
 </head>
+
 <body>
 
-  <div class="greeting-card">
-    <h1 id="greetingMessage">Loading...</h1>
-    <button id="logoutBtn" style="display: none;">Logout</button>
-  </div>
+    <div class="greeting-card">
+        <h1 id="greetingMessage">Loading...</h1>
+        <button id="logoutBtn" style="display: none;">Logout</button>
+    </div>
 
-  <script>
-    const keycloak = new Keycloak({
-            url: 'https://iam.kingpower.com', 
-            realm: 'f1-bof',                
-            clientId: 'github-auth'          
+    <script>
+        const keycloak = new Keycloak({
+            url: 'https://iam.kingpower.com',
+            realm: 'f1-bof',
+            clientId: 'github-auth'
         });
 
-    keycloak.init({ onLoad: 'login-required' }).then(authenticated => {
-      if (authenticated) {
-        const username = keycloak.tokenParsed?.preferred_username || 'User';
-        document.getElementById('greetingMessage').textContent = `Hello, ${username}!`;
-        
-        const logoutBtn = document.getElementById('logoutBtn');
-        logoutBtn.style.display = 'inline-block';
-        
-        logoutBtn.addEventListener('click', function() {
-          keycloak.logout({
-            redirectUri: window.location.origin + '/index.html'
-          });
+        keycloak.init({
+            onLoad: 'login-required',
+            checkLoginIframe: false
+        }).then(authenticated => {
+            if (authenticated) {
+                const username = keycloak.tokenParsed?.preferred_username || 'User';
+                document.getElementById('greetingMessage').textContent = `Hello, ${username}!`;
+
+                const logoutBtn = document.getElementById('logoutBtn');
+                logoutBtn.style.display = 'inline-block';
+
+                logoutBtn.addEventListener('click', function () {
+                    keycloak.logout({
+                        redirectUri: window.location.origin + '/index.html'
+                    });
+                });
+            } else {
+                window.location.href = '../index.html';
+            }
+        }).catch(err => {
+            console.error("Authentication failed", err);
+            window.location.href = '../index.html';
         });
-      } else {
-        window.location.href = '../index.html';
-      }
-    }).catch(err => {
-      console.error("Authentication failed", err);
-      window.location.href = '../index.html';
-    });
-  </script>
+    </script>
 
 </body>
+
 </html>
