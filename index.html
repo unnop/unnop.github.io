@@ -1,45 +1,49 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>GitHub Pages</title>
-        <script src="https://iam.kingpower.com/js/keycloak.js"></script>
-    </head>
-    <body>
-        <div id="loading">กำลังตรวจสอบสิทธิ์...</div>
-        <script>
-            const keycloak = new Keycloak({
-                url: "https://iam.kingpower.com",
-                realm: "f1-bof",
-                clientId: "github-auth",
-            });
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get("action") === "logout") {
-                keycloak.logout({ redirectUri: "https://unnop.github.io/greeting/" });
-            } else {
-                keycloak.onAuthSuccess = function () {
-                    sessionStorage.setItem("access_token", keycloak.token);
-                    sessionStorage.setItem("username", keycloak.tokenParsed.preferred_username);
-                    window.location.href = "greeting/";
-                };
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages</title>
+    <script src="https://iam.kingpower.com/js/keycloak.js"></script>
+</head>
+<body>
+    <div id="loading">กำลังตรวจสอบสิทธิ์...</div>
 
-                keycloak
-                    .init({
-                        onLoad: "login-required",
-                        checkLoginIframe: false,
-                        redirectUri: "https://unnop.github.io/greeting/",
-                    })
-                    .then(function (authenticated) {
-                        if (!authenticated) {
-                            document.getElementById("loading").innerText = "ไม่ได้รับอนุญาตให้เข้าใช้งาน";
-                        }
-                    })
-                    .catch(function (error) {
-                        console.error("Keycloak Init Error:", error);
-                        document.getElementById("loading").innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อ";
-                    });
-            }
-        </script>
-    </body>
+    <script>
+        const keycloak = new Keycloak({
+            url: 'https://iam.kingpower.com', 
+            realm: 'f1-bof',                
+            clientId: 'github-auth'          
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('action') === 'logout') {
+            keycloak.init({ checkLoginIframe: false }).then(function() {
+                sessionStorage.clear();
+                keycloak.logout();
+            });
+        } else {
+            keycloak.onAuthSuccess = function() {
+                sessionStorage.setItem('access_token', keycloak.token);
+                sessionStorage.setItem('username', keycloak.tokenParsed.preferred_username);
+                window.location.href = 'greeting/';
+            };
+
+            keycloak.init({ 
+                onLoad: 'login-required', 
+                checkLoginIframe: false,
+                // 💡 เปลี่ยนมาใช้ URL ใหม่ของคุณในการทำแลกเปลี่ยนสิทธิ์กับ Keycloak
+                redirectUri: 'https://unnop.github.io/greeting/'
+            }).then(function(authenticated) {
+                if (!authenticated) {
+                    document.getElementById('loading').innerText = 'ไม่ได้รับอนุญาตให้เข้าใช้งาน';
+                }
+            }).catch(function(error) {
+                console.error('Keycloak Init Error:', error);
+                document.getElementById('loading').innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
+            });
+        }
+    </script>
+</body>
 </html>
