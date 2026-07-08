@@ -66,7 +66,10 @@
 
         function handleLogout() {
             sessionStorage.clear();
-            window.location.replace('../');
+
+            const logoutUrl = 'https://iam.kingpower.com/realms/f1-bof/protocol/openid-connect/logout?redirect_uri=' + encodeURIComponent('https://unnop.github.io/');
+    
+            window.location.replace(logoutUrl);
         }
     </script>
 </body>
