@@ -1,51 +1,75 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Pages</title>
-    <script src="https://iam.kingpower.com/js/keycloak.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f3f4f6;
+    }
+    .login-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+    }
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 1rem;
+    }
+    button:hover {
+      background-color: #1d4ed8;
+    }
+  </style>
+  <!-- Keycloak JS Adapter -->
+  <script src="https://iam.kingpower.com/js/keycloak.js"></script>
 </head>
 <body>
-    <div id="loading">กำลังตรวจสอบสิทธิ์...</div>
 
-    <script>
-        const keycloak = new Keycloak({
+  <div class="login-card">
+    <h2>Welcome</h2>
+    <p>Please sign in to continue</p>
+    <button id="loginBtn">Login with Keycloak</button>
+  </div>
+
+  <script>
+    const keycloak = new Keycloak({
             url: 'https://iam.kingpower.com', 
             realm: 'f1-bof',                
             clientId: 'github-auth'          
         });
 
-        const urlParams = new URLSearchParams(window.location.search);
-        
-        if (urlParams.get('action') === 'logout') {
-            keycloak.init({ checkLoginIframe: false }).then(function() {
-                localStorage.clear();
-                keycloak.logout();
-            });
-        } else {
-            keycloak.onAuthSuccess = function() {
-                // 💡 เปลี่ยนมาใช้ localStorage เพื่อให้ส่งข้ามโฟลเดอร์ได้ชัวร์กว่า
-                localStorage.setItem('access_token', keycloak.token);
-                localStorage.setItem('username', keycloak.tokenParsed.preferred_username);
-                
-                // ใช้ replace เพื่อไม่ให้ประวัติหน้าแรกค้างในปุ่ม Back บล็อกการลูป
-                window.location.replace('greeting/');
-            };
+    keycloak.init({ onLoad: 'check-sso' }).then(authenticated => {
+      if (authenticated) {
+        window.location.href = 'greeting/index.html';
+      } else {
+        document.getElementById('loginBtn').addEventListener('click', function() {
+          keycloak.login({
+            redirectUri: window.location.origin + '/greeting/index.html'
+          });
+        });
+      }
+    }).catch(err => {
+      console.error("Failed to initialize Keycloak", err);
+    });
+  </script>
 
-            keycloak.init({ 
-                onLoad: 'login-required', 
-                checkLoginIframe: false,
-                redirectUri: 'https://unnop.github.io/greeting/'
-            }).then(function(authenticated) {
-                if (!authenticated) {
-                    document.getElementById('loading').innerText = 'ไม่ได้รับอนุญาตให้เข้าใช้งาน';
-                }
-            }).catch(function(error) {
-                console.error('Keycloak Init Error:', error);
-                document.getElementById('loading').innerText = 'เกิดข้อผิดพลาดในการเชื่อมต่อ';
-            });
-        }
-    </script>
 </body>
 </html>
