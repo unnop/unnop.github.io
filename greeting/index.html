@@ -14,10 +14,11 @@
 
     <script>
         function checkTokenAndRedirect() {
-            const accessToken = sessionStorage.getItem('access_token');
+            // 💡 ดึงจาก localStorage ให้ตรงกับหน้าแรก
+            const accessToken = localStorage.getItem('access_token');
             
             if (!accessToken) {
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.replace('../');
                 return;
             }
@@ -35,17 +36,18 @@
                 console.log("Token จะหมดอายุในอีก:", (payload.exp - currentTime) + " วินาที");
 
                 if (currentTime >= payload.exp) {
-                    sessionStorage.clear();
+                    localStorage.clear();
                     alert('❌ เซสชันของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบใหม่อีกครั้ง');
                     window.location.replace('../');
                 }
             } catch (e) {
-                sessionStorage.clear();
+                localStorage.clear();
                 window.location.replace('../');
             }
         }
 
-        checkTokenAndRedirect();
+        // 💡 ให้ดีเลย์การเช็กสิทธิ์รอบแรก 300 มิลลิวินาที เพื่อให้เบราว์เซอร์เซฟค่าลงดิสก์เสร็จก่อนเช็ก ป้องกันการลูปเตะออก
+        setTimeout(checkTokenAndRedirect, 300);
         setInterval(checkTokenAndRedirect, 5000);
     </script>
 
@@ -59,13 +61,14 @@
     </div>
 
     <script>
-        const username = sessionStorage.getItem('username');
+        // 💡 เปลี่ยนมาดึงจาก localStorage
+        const username = localStorage.getItem('username');
         if (username) {
             document.getElementById('display-username').innerText = username;
         }
 
         function handleLogout() {
-            sessionStorage.clear();
+            localStorage.clear();
             window.location.replace('../?action=logout');
         }
     </script>
